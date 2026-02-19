@@ -22,6 +22,20 @@
     tree
     btop
     fastfetch
+    libreoffice-qt
+    wpsoffice
+    jdk21
+    maven
+    gradle
+    jetbrains.idea-oss
+    poppler-utils
+    ueberzugpp
+    unrar
+    go
+    gopls
+    stdenv.cc
+    python3
+    python3Packages.pip
   ];
 
   home.sessionVariables = {
@@ -130,7 +144,9 @@
       set -g allow-passthrough on
 
       # Ensure tmux identifies as a modern terminal
-      set -g default-terminal "tmux-256color"
+      set -g default-terminal "xterm-ghostty"
+      set -ga update-environment TERM
+      set -ga update-environment TERM_PROGRAM
       set -as terminal-overrides ',xterm-ghostty:RGBA'
 
       set -g prefix C-a
@@ -152,6 +168,7 @@
       set -g status-right-length 100
       set -g status-right '#[fg=#059669]Only advance, stop at nothing to advance #[fg=yellow]%Y-%m-%d #[fg=#9333ea]%H:%M'
 
+      bind c new-window -c "#{pane_current_path}"
       bind | split-window -h -c "#{pane_current_path}"
       bind - split-window -v -c "#{pane_current_path}"
       unbind '"'
@@ -182,6 +199,26 @@
       preview_images = true;
       preview_images_method = "kitty";
     };
+  };
+
+  home.file.".config/ranger/scope.sh".text = ''
+    #!/usr/bin/env bash
+
+    set -o noclobber -o noglob -o nounset -o pipefail
+    IFS=$'\n'
+
+    case "$mimetype" in
+      application/pdf)
+        if [ "$preview_images" = "True" ]; then
+          pdftoppm -f 1 -l 1 -scale-to-x 1200 -scale-to-y -1 -singlefile -jpeg -- "$FILE_PATH" "''${IMAGE_CACHE_PATH%.*}" && exit 6
+        fi
+        exit 1;;
+    esac
+  '';
+
+  programs.java = {
+    enable = true;
+    package = pkgs.jdk21;
   };
 
 }

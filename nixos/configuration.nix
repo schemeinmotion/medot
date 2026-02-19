@@ -46,12 +46,13 @@
 
   i18n.inputMethod = {
     enable = true;
-    type = "ibus";
-    ibus.engines = with pkgs.ibus-engines; [
-      bamboo
+    type = "fcitx5";
+    fcitx5.addons = with pkgs; [
+      fcitx5-gtk
+      fcitx5-lua
+      fcitx5-bamboo
     ];
   };
-
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -104,8 +105,6 @@
   };
   programs.fish.enable = true;
 
-  #home-manager.users.blue = import ../home.nix;
-
   # Install firefox.
   programs.firefox.enable = true;
 
@@ -118,8 +117,8 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     vim
-    ibus
-    ibus-engines.bamboo
+    qt6Packages.fcitx5-configtool
+    fcitx5-bamboo
     arduino
     libgcc
     libgccjit
@@ -127,9 +126,9 @@
   ];
 
   environment.sessionVariables = {
-    GTK_IM_MODULE = "ibus";
-    QT_IM_MODULE = "ibus";
-    XMODIFIERS = "@im=ibus";
+    GTK_IM_MODULE = "fcitx";
+    QT_IM_MODULE = "fcitx";
+    XMODIFIERS = "@im=fcitx";
   };
 
   # Some programs need SUID wrappers, can be configured further or are
