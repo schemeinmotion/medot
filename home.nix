@@ -13,7 +13,6 @@
     obsidian
     anki
     qbittorrent
-    ghostty
     neovim
     vimPlugins.LazyVim
     bun
@@ -25,11 +24,29 @@
     fastfetch
   ];
 
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
+
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
       set -g fish_greeting ""
     '';
+  };
+
+  programs.ghostty = {
+    enable = true;
+    settings = {
+      theme = "Dark+";
+      font-size = 11;
+      cursor-style = "block";
+      shell-integration-features = "no-cursor";
+      background-opacity = 0.95;
+      background-blur-radius = 20;
+      window-decoration = false; 
+    };
   };
 
   programs.starship = {
@@ -60,20 +77,28 @@
       git_branch = {
         symbol = " ";
         style = "bold purple";
+        format = "[$symbol$branch]($style) ";
       };
     };
   };
 
   programs.git = {
     enable = true;
-    userName = "schememaster333";
-    userEmail = "schememaster333@gmail.com";
-    aliases = {
-      la = "log --graph --oneline --decorate --all";
-      last = "log -1 HEAD";
-    };
-    extraConfig = {
-      init.defaultBranch = "main";
+    settings = {
+      user = {
+        name = "schememaster333";
+        email = "schememaster333@gmail.com";
+      };
+      core = {
+        editor = "nvim";
+      };
+      alias = {
+        la = "log --graph --oneline --decorate --all";
+        last = "log -1 HEAD";
+      };
+      init = {
+        defaultBranch = "main";
+      };
     };
   };
 
@@ -96,6 +121,17 @@
 
     extraConfig = ''
       # hi there
+
+      set-option -g default-shell ${pkgs.fish}/bin/fish
+
+      # This ensures images are cleared when you switch panes
+      set -g visual-activity off
+      # Allow programs to bypass tmux and talk to Ghostty directly
+      set -g allow-passthrough on
+
+      # Ensure tmux identifies as a modern terminal
+      set -g default-terminal "tmux-256color"
+      set -as terminal-overrides ',xterm-ghostty:RGBA'
 
       set -g prefix C-a
       unbind C-b
